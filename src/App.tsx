@@ -1,21 +1,34 @@
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react";
 
-export function App() {
+export default function App() {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    chrome.storage.local.get(["enabled"], (res) => {
+      setEnabled(res.enabled as boolean);
+    });
+  }, []);
+
+  const toggle = () => {
+    const newValue = !enabled;
+    setEnabled(newValue);
+
+    chrome.storage.local.set({ enabled: newValue });
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id as number, {
+        type: "TOGGLE_DARK",
+        enabled: newValue
+      });
+    });
+  };
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
+    <div style={{ padding: 16, minWidth: 200 }}>
+      <h3>Darkify Lite</h3>
+      <button onClick={toggle}>
+        {enabled ? "Disable" : "Enable"}
+      </button>
     </div>
-  )
+  );
 }
-
-export default App
