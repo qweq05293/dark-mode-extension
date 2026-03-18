@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import { Title } from "./components/app-title";
+import { ModeToggle } from "./components/mode-toggle";
+import { Button } from "./components/ui/button";
+import { SidebarClose } from "lucide-react";
 
 export default function App() {
   const [enabled, setEnabled] = useState(false);
@@ -24,11 +28,17 @@ export default function App() {
   };
 
   return (
-    <div style={{ padding: 16, minWidth: 200 }}>
-      <h3>Darkify Lite</h3>
-      <button onClick={toggle}>
-        {enabled ? "Disable" : "Enable"}
-      </button>
+    <div className="p-4 max-w-90 mx-auto min-h-screen flex flex-col gap-4 bg-radial-primary">
+      <div className="flex items-center justify-between">
+        <Title className="text-foreground/90" text={chrome.i18n.getMessage("extension_name")} align="left" size="lg" />
+        <div className="flex gap-2">
+          <ModeToggle onClick={toggle} />
+          <Button variant="ghost" size="icon" onClick={() => window.close()}>
+            <SidebarClose className="w-5 h-5 text-primary" />
+          </Button>
+        </div>
+      </div>
+
     </div>
   );
 }
