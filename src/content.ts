@@ -1,10 +1,10 @@
-const STYLE_ID = "darkify-style";
+const STYLE_ID = "darkify-style"
 
 function applyDarkMode() {
-  if (document.getElementById(STYLE_ID)) return;
+  if (document.getElementById(STYLE_ID)) return
 
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
+  const style = document.createElement("style")
+  style.id = STYLE_ID
   style.textContent = `
     html, body {
       background-color: #121212 !important;
@@ -18,22 +18,22 @@ function applyDarkMode() {
     * {
       border-color: #333 !important;
     }
-  `;
+  `
 
-  document.head.appendChild(style);
+  document.head.appendChild(style)
 }
 
 function removeDarkMode() {
-  const style = document.getElementById(STYLE_ID);
-  if (style) style.remove();
+  const style = document.getElementById(STYLE_ID)
+  if (style) style.remove()
 }
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "TOGGLE_DARK") {
     if (msg.enabled) {
-      applyDarkMode();
+      applyDarkMode()
     } else {
-      removeDarkMode();
+      removeDarkMode()
     }
   }
-});
+})

@@ -7,13 +7,19 @@
   "action": {
     "default_title": "__MSG_extension_name__"
   },
-  "permissions": ["scripting", "activeTab", "storage",  "sidePanel"],
+  "permissions": ["scripting", "activeTab", "storage", "sidePanel"],
   "side_panel": {
     "default_path": "index.html"
   },
   "background": {
     "service_worker": "background.js"
   },
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "icons": {
     "128": "icon128.png"
   }
