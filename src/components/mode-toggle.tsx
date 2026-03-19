@@ -3,7 +3,7 @@ import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/components/theme-provider"
 
-export function ModeToggle({ onClick }: { onClick?: () => void }) {
+export function ModeToggle({ onClick, text }: { onClick?: () => void, text?: string }) {
   const { setTheme, theme } = useTheme()
 
   function hanleClick() {
@@ -18,6 +18,7 @@ export function ModeToggle({ onClick }: { onClick?: () => void }) {
   return (
     <Button
       variant="ghost"
+      className="flex gap-2"
       size="icon"
       onClick={() => {
         hanleClick()
@@ -26,6 +27,7 @@ export function ModeToggle({ onClick }: { onClick?: () => void }) {
     >
       <Sun className="h-5 w-5 scale-100 rotate-0 text-primary transition-all dark:scale-0 dark:-rotate-90" />
       <Moon className="absolute h-5 w-5 scale-0 rotate-90 text-primary transition-all dark:scale-100 dark:rotate-0" />
+      {text && <span className="ml-2">{text}</span>}
     </Button>
   )
 }

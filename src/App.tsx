@@ -20,10 +20,31 @@ export default function App() {
     chrome.storage.local.set({ enabled: newValue })
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id as number, {
-        type: "TOGGLE_DARK",
-        enabled: newValue,
-      })
+      const tabId = tabs[0]?.id
+      if (!tabId) return
+
+      // 1. Гарантируем, что content script есть
+      chrome.scripting.executeScript(
+        {
+          target: { tabId },
+          files: ["content.js"],
+        },
+        () => {
+          // 2. Теперь безопасно отправляем сообщение
+          chrome.tabs.sendMessage(
+            tabId,
+            {
+              type: "TOGGLE_DARK",
+              enabled: newValue,
+            },
+            () => {
+              if (chrome.runtime.lastError) {
+                console.warn("SendMessage error:", chrome.runtime.lastError.message)
+              }
+            }
+          )
+        }
+      )
     })
   }
 
@@ -32,12 +53,14 @@ export default function App() {
       <div className="flex items-center justify-between">
         <Title className="text-foreground/90" text={chrome.i18n.getMessage("extension_name")} align="left" size="lg" />
         <div className="flex gap-2">
-          <ModeToggle onClick={toggle} />
           <Button variant="ghost" size="icon" onClick={() => window.close()}>
             <SidebarClose className="h-5 w-5 text-primary" />
           </Button>
         </div>
       </div>
+      <Button variant="default" size="lg" asChild>
+        <ModeToggle onClick={toggle} text={chrome.i18n.getMessage("switch_theme")} />
+      </Button>
     </div>
   )
 }
