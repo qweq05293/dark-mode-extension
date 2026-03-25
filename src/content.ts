@@ -11,7 +11,9 @@ function init() {
   chrome.storage.local.get(["enabled"], (res) => {
     isEnabled = Boolean(res.enabled)
 
-    if (isEnabled && !isPageAlreadyDark()) {
+    // if (isEnabled && !isPageAlreadyDark()) {
+    if (isEnabled  ) {
+
       applyDarkMode()
     }
   })
@@ -100,21 +102,21 @@ function removeDarkMode() {
 // =========================
 // DETECT DARK PAGE
 // =========================
-function isPageAlreadyDark() {
-  const bgColor = window.getComputedStyle(document.body).backgroundColor
-  const rgb = bgColor.match(/\d+/g)
-  if (!rgb) return false
+// function isPageAlreadyDark() {
+//   const bgColor = window.getComputedStyle(document.body).backgroundColor
+//   const rgb = bgColor.match(/\d+/g)
+//   if (!rgb) return false
 
-  const [r, g, b] = rgb.map(Number)
+//   const [r, g, b] = rgb.map(Number)
 
-  const brightness = Math.sqrt(
-    0.299 * r ** 2 +
-    0.587 * g ** 2 +
-    0.114 * b ** 2
-  )
+//   const brightness = Math.sqrt(
+//     0.299 * r ** 2 +
+//     0.587 * g ** 2 +
+//     0.114 * b ** 2
+//   )
 
-  return brightness < 128
-}
+//   return brightness < 128
+// }
 
 // =========================
 // SPA SUPPORT (React/Vue сайты)

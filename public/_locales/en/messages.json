@@ -5,7 +5,10 @@
   "extension_description": {
     "message": "Simple dark mode toggle for any website"
   },
-  "switch_theme": {
-    "message": "Switch Theme"
+  "enable_theme_change": {
+    "message": "Enable Theme Change"
+  },
+  "disable_theme_change": {
+    "message": "Disable Theme Change"
   }
 }

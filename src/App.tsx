@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Title } from "./components/app-title"
 import { Button } from "./components/ui/button"
-import { CheckCheck, SidebarClose } from "lucide-react"
+import {  SidebarClose } from "lucide-react"
 
 export default function App() {
   const [enabled, setEnabled] = useState(false)
@@ -48,18 +48,18 @@ export default function App() {
   }
 
   return (
-    <div className="bg-radial-primary mx-auto flex min-h-screen max-w-90 flex-col items-center justify-center gap-4 p-4">
+    <div className="bg-radial-primary mx-auto flex min-h-screen max-w-90 flex-col items-center justify-start gap-4 p-4 ">
       <div className="flex items-center justify-between">
         <Title className="text-foreground/90" text={chrome.i18n.getMessage("extension_name")} align="left" size="lg" />
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center justify-between">
           <Button variant="ghost" size="icon" onClick={() => window.close()}>
             <SidebarClose className="h-5 w-5 text-primary" />
           </Button>
         </div>
       </div>
       <Button variant="destructive" size="lg" className="w-full" onClick={toggle}>
-        {chrome.i18n.getMessage("switch_theme")}
-        {enabled && <CheckCheck className="h-5 w-5 text-green-500" />}
+        {enabled ? chrome.i18n.getMessage("disable_theme_change") : chrome.i18n.getMessage("enable_theme_change")}
+        {/* {enabled && <CheckCheck className="h-5 w-5 text-green-500" />} */}
       </Button>
     </div>
   )
