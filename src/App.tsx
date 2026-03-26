@@ -29,7 +29,7 @@ export default function App() {
       return;
     }
     // Пытаемся отправить сообщение
-    chrome.tabs.sendMessage(activeTab.id, { type: "TOGGLE_DARK", enabled: newValue }, (response) => {
+    chrome.tabs.sendMessage(activeTab.id, { type: "TOGGLE_DARK", enabled: newValue }, () => {
       // Если получили ошибку (скрипта нет), внедряем его
       if (chrome.runtime.lastError) {
         chrome.scripting.executeScript({
