@@ -12,33 +12,28 @@ export default function App() {
     })
   }, [])
 
- const toggle = () => {
+const toggle = () => {
   const newValue = !enabled
   setEnabled(newValue)
   chrome.storage.local.set({ enabled: newValue })
 
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    const activeTab = tabs[0];
-    if (!activeTab || !activeTab.id ) return;
-  const isRestricted = activeTab?.url?.startsWith("chrome://") || 
-                        activeTab?.url?.startsWith("edge://") || 
-                        activeTab?.url?.startsWith("https://chrome.google.com");
+  chrome.tabs.query({ active: true, currentWindow: true }, ([activeTab]) => {
+    if (!activeTab?.id) return;
 
-    if (isRestricted) {
-      console.warn("Cannot run extension on internal chrome pages");
-      return;
-    }
-    // Пытаемся отправить сообщение
+    // Проверка на защищенные протоколы (url может быть пустой без прав "tabs")
+    const url = activeTab.url || ""; 
+    const isRestricted = url.startsWith("chrome://") || 
+                         url.startsWith("edge://") || 
+                         url.startsWith("https://chrome.google.com");
+
+    if (isRestricted || !url) return;
+
     chrome.tabs.sendMessage(activeTab.id, { type: "TOGGLE_DARK", enabled: newValue }, () => {
-      // Если получили ошибку (скрипта нет), внедряем его
       if (chrome.runtime.lastError) {
         chrome.scripting.executeScript({
-          target: { tabId: activeTab.id  as number},
+          target: { tabId: activeTab.id as number},
           files: ["content.js"]
-        }, () => {
-          // После внедрения скрипт сам прочитает storage в init() и включится
-          console.log("Content script injected");
-        });
+        }).catch(err => console.warn("Injection blocked:", err));
       }
     });
   });
