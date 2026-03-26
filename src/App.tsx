@@ -51,15 +51,14 @@ export default function App() {
     <div className="bg-radial-primary mx-auto flex min-h-screen max-w-90 flex-col items-center justify-start gap-4 p-4 ">
       <div className="flex items-center justify-between">
         <Title className="text-foreground/90" text={chrome.i18n.getMessage("extension_name")} align="left" size="lg" />
-        <div className="flex gap-2 items-center justify-between">
+        <div className=" w-full flex gap-2 items-center justify-between">
           <Button variant="ghost" size="icon" onClick={() => window.close()}>
             <SidebarClose className="h-5 w-5 text-primary" />
           </Button>
         </div>
       </div>
-      <Button variant="destructive" size="lg" className="w-full" onClick={toggle}>
+      <Button variant="destructive" size="lg" className="w-full h-10 text-foreground" onClick={toggle}>
         {enabled ? chrome.i18n.getMessage("disable_theme_change") : chrome.i18n.getMessage("enable_theme_change")}
-        {/* {enabled && <CheckCheck className="h-5 w-5 text-green-500" />} */}
       </Button>
     </div>
   )

@@ -67,12 +67,20 @@ function applyDarkMode() {
     /* Media compensation */
     img,
     video,
-    picture,
-    canvas,
-    svg {
+    picture {
       filter: invert(1) hue-rotate(180deg) !important;
     }
 
+        /* Иконки (SVG) обычно НЕ нужно инвертировать второй раз, 
+       так как они должны менять цвет вместе с текстом */
+    svg:not(:has(image)) {
+      filter: none !important;
+    }
+
+    /* Если в SVG есть встроенное растровое изображение — его инвертируем */
+    svg:has(image) {
+      filter: invert(1) hue-rotate(180deg) !important;
+    }
     /* Fix images inside background */
     [style*="background-image"] {
       filter: invert(1) hue-rotate(180deg) !important;
