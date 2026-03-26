@@ -1,6 +1,17 @@
-const STYLE_ID = "darkify-style"
+declare global {
+  interface Window {
+    HAS_DARKIFY_INJECTED?: boolean;
+  }
+}
 
-let isEnabled = false
+// Проверка, чтобы не инициализировать скрипт дважды
+if (window.HAS_DARKIFY_INJECTED) {
+  // Если скрипт уже есть, просто выходим, он сам поймает сообщение или прочитает сторедж
+} else {
+  window.HAS_DARKIFY_INJECTED = true;
+
+  let isEnabled = false;
+  const STYLE_ID = "darkify-style";
 
 // =========================
 // INIT (при загрузке)
@@ -129,15 +140,15 @@ function removeDarkMode() {
 // =========================
 // SPA SUPPORT (React/Vue сайты)
 // =========================
-const observer = new MutationObserver(() => {
-  if (!isEnabled) return
+  const observer = new MutationObserver(() => {
+    if (!isEnabled) return;
+    if (!document.getElementById(STYLE_ID)) {
+      applyDarkMode();
+    }
+  });
 
-  if (!document.getElementById(STYLE_ID)) {
-    applyDarkMode()
-  }
-})
-
-observer.observe(document.documentElement, {
-  childList: true,
-  subtree: true,
-})
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+  });
+}

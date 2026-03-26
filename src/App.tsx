@@ -12,46 +12,43 @@ export default function App() {
     })
   }, [])
 
-  const toggle = () => {
-    const newValue = !enabled
-    setEnabled(newValue)
+ const toggle = () => {
+  const newValue = !enabled
+  setEnabled(newValue)
+  chrome.storage.local.set({ enabled: newValue })
 
-    chrome.storage.local.set({ enabled: newValue })
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs[0];
+    if (!activeTab || !activeTab.id ) return;
+  const isRestricted = activeTab?.url?.startsWith("chrome://") || 
+                        activeTab?.url?.startsWith("edge://") || 
+                        activeTab?.url?.startsWith("https://chrome.google.com");
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tabId = tabs[0]?.id
-      if (!tabId) return
-
-      // 1. Гарантируем, что content script есть
-      chrome.scripting.executeScript(
-        {
-          target: { tabId },
-          files: ["content.js"],
-        },
-        () => {
-          // 2. Теперь безопасно отправляем сообщение
-          chrome.tabs.sendMessage(
-            tabId,
-            {
-              type: "TOGGLE_DARK",
-              enabled: newValue,
-            },
-            () => {
-              if (chrome.runtime.lastError) {
-                console.warn("SendMessage error:", chrome.runtime.lastError.message)
-              }
-            }
-          )
-        }
-      )
-    })
-  }
+    if (isRestricted) {
+      console.warn("Cannot run extension on internal chrome pages");
+      return;
+    }
+    // Пытаемся отправить сообщение
+    chrome.tabs.sendMessage(activeTab.id, { type: "TOGGLE_DARK", enabled: newValue }, (response) => {
+      // Если получили ошибку (скрипта нет), внедряем его
+      if (chrome.runtime.lastError) {
+        chrome.scripting.executeScript({
+          target: { tabId: activeTab.id  as number},
+          files: ["content.js"]
+        }, () => {
+          // После внедрения скрипт сам прочитает storage в init() и включится
+          console.log("Content script injected");
+        });
+      }
+    });
+  });
+}
 
   return (
     <div className="bg-radial-primary mx-auto flex min-h-screen max-w-90 flex-col items-center justify-start gap-4 p-4 ">
-      <div className="flex items-center justify-between">
+      <div className="flex  w-full  items-center justify-between">
         <Title className="text-foreground/90" text={chrome.i18n.getMessage("extension_name")} align="left" size="lg" />
-        <div className=" w-full flex gap-2 items-center justify-between">
+        <div className="  flex gap-2 items-center justify-between">
           <Button variant="ghost" size="icon" onClick={() => window.close()}>
             <SidebarClose className="h-5 w-5 text-primary" />
           </Button>
